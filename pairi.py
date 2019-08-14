@@ -15,7 +15,7 @@ from datetime import datetime
 from collections import OrderedDict
 
 logfile = '/var/log/pairi.log'
-fh = open(logfile, 'w')
+fh = open(logfile, 'a')
 
 class SimpleHTTPRequestHandler(BaseHTTPRequestHandler):
     def do_GET(self):
@@ -37,6 +37,7 @@ class SimpleHTTPRequestHandler(BaseHTTPRequestHandler):
         o.move_to_end('key', last=False)
         o.move_to_end('datetime', last=False)
         fh.write(json.dumps(o) + "\n")
+        fh.flush()
         
 
         # forward the request on to the real destination
