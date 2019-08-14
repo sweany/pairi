@@ -17,8 +17,12 @@ The device sends 3 different HTTP requests every 2 minutes. They look similar to
 127.0.0.1 - - [13/Aug/2019 06:26:29] "GET /update?key=<key3>&field4=25768&field5=0.02&field6=1016.38 HTTP/1.1" 200 -
 ```
 
-For `<key1>`: 
-* PM1 = field1
-* PM2.5 = field2
-* PM10 = field3
+* For `<key1>`, the AQI indicators
+  - PM1 = field1
+  - PM2.5 = field2
+  - PM10 = field3
+
+* `<key2>` reports particle counters, in ug per deciliter.
+
+* `<key3>` reports temperature, humidity, and pressure.
 
