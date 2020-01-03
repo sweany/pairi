@@ -1,0 +1,191 @@
+<form>
+  <label>air quality</label>
+  <fieldset submitButton="false">
+    <input type="time" token="field1">
+      <label></label>
+      <default>
+        <earliest>-24h@h</earliest>
+        <latest>now</latest>
+      </default>
+    </input>
+  </fieldset>
+  <row>
+    <panel>
+      <single>
+        <title>PM &lt;2.5 AQI</title>
+        <search>
+          <query>sourcetype=purpleair | spath | search "key{}"=NATEY8JBPZKMVJ4I | rename field2{} as field2 | eval pm2_5=field2 | stats latest(pm2_5) as pm25 | eval aqi=case(pm25&lt;12.1,pm25*(50/12), pm25&lt;35.5,50+((pm25-12)/(23.5))*50, pm25&lt;55.5,100+((pm25-35.5)/20)*50, pm25&lt;150.5,150+((pm25-55.5)/95)*50, pm25&lt;250.5,200+((pm25-150.5)/100)*100, pm25&lt;350.5,300+((pm25-250.5)/100)*100, pm25&lt;500,400+((pm25-350.5)/150)*100, 1=1,pm25) | fields aqi</query>
+          <earliest>-60m@m</earliest>
+          <latest>now</latest>
+          <refresh>2m</refresh>
+          <refreshType>delay</refreshType>
+        </search>
+        <option name="colorMode">block</option>
+        <option name="drilldown">none</option>
+        <option name="height">199</option>
+        <option name="rangeColors">["0x53a051","0xf8de54","0xf8be34","0xdc4e41","0xcc00cc","0xac1e11"]</option>
+        <option name="rangeValues">[50,100,150,200,300]</option>
+        <option name="refresh.display">progressbar</option>
+        <option name="useColors">1</option>
+      </single>
+    </panel>
+    <panel>
+      <single>
+        <title>PM1</title>
+        <search>
+          <query>sourcetype=purpleair | spath | search "key{}"=NATEY8JBPZKMVJ4I | rename field1{} as field1 | eval pm1=field1 | stats latest(pm1)</query>
+          <earliest>-15m</earliest>
+          <latest>now</latest>
+          <refresh>2m</refresh>
+          <refreshType>delay</refreshType>
+        </search>
+        <option name="drilldown">none</option>
+        <option name="numberPrecision">0.00</option>
+        <option name="rangeColors">["0x53a051","0xf8de54","0xf1813f","0xdc4e41","0xcc00cc","0xac1e11"]</option>
+        <option name="rangeValues">[12,35.49,55.49,150.49,250.49]</option>
+        <option name="refresh.display">progressbar</option>
+        <option name="useColors">1</option>
+      </single>
+    </panel>
+    <panel>
+      <single>
+        <title>PM2.5</title>
+        <search>
+          <query>sourcetype=purpleair | spath | search "key{}"=NATEY8JBPZKMVJ4I | rename field2{} as field2 | eval pm2_5=field2 | stats latest(pm2_5)</query>
+          <earliest>-60m@m</earliest>
+          <latest>now</latest>
+          <refresh>2m</refresh>
+          <refreshType>delay</refreshType>
+        </search>
+        <option name="colorMode">none</option>
+        <option name="drilldown">none</option>
+        <option name="height">199</option>
+        <option name="numberPrecision">0.00</option>
+        <option name="rangeColors">["0x53a051","0xf8de54","0xf8be34","0xdc4e41","0xcc00cc","0xac1e11"]</option>
+        <option name="rangeValues">[12,35.49,55.49,150.49,250.49]</option>
+        <option name="refresh.display">progressbar</option>
+        <option name="underLabel">ug/m3</option>
+        <option name="unitPosition">after</option>
+        <option name="useColors">1</option>
+      </single>
+    </panel>
+    <panel>
+      <single>
+        <title>PM10</title>
+        <search>
+          <query>sourcetype=purpleair | spath | search "key{}"=NATEY8JBPZKMVJ4I | rename field3{} as field3 | eval pm10=field3 | stats latest(pm10)</query>
+          <earliest>-15m</earliest>
+          <latest>now</latest>
+          <refresh>2m</refresh>
+          <refreshType>delay</refreshType>
+        </search>
+        <option name="drilldown">none</option>
+        <option name="numberPrecision">0.00</option>
+        <option name="rangeColors">["0x53a051","0xf8de54","0xf8be34","0xdc4e41","0xcc00cc","0xac1e11"]</option>
+        <option name="rangeValues">[12,35.49,55.49,150.49,250.49]</option>
+        <option name="refresh.display">progressbar</option>
+        <option name="useColors">1</option>
+      </single>
+    </panel>
+  </row>
+  <row>
+    <panel>
+      <chart>
+        <search>
+          <query>sourcetype=purpleair | spath | search key{}=NATEY8JBPZKMVJ4I | rename field1{} as pm1, field2{} as pm2_5, field3{} as pm10 | timechart span=2m max(pm1) as pm1 max(pm2_5) as pm2_5 max(pm10) as pm10 | trendline sma5(pm2_5)</query>
+          <earliest>$field1.earliest$</earliest>
+          <latest>$field1.latest$</latest>
+          <refresh>10m</refresh>
+          <refreshType>delay</refreshType>
+        </search>
+        <option name="charting.axisTitleX.visibility">visible</option>
+        <option name="charting.axisTitleY.visibility">visible</option>
+        <option name="charting.axisTitleY2.visibility">visible</option>
+        <option name="charting.axisY.scale">linear</option>
+        <option name="charting.chart">line</option>
+        <option name="charting.chart.nullValueMode">connect</option>
+        <option name="charting.chart.overlayFields">sma5(pm2_5)</option>
+        <option name="charting.drilldown">none</option>
+        <option name="charting.legend.placement">right</option>
+        <option name="refresh.display">progressbar</option>
+      </chart>
+    </panel>
+    <panel>
+      <chart>
+        <title>particle counters (ug)</title>
+        <search>
+          <query>sourcetype=purpleair | spath | search key{}=MYR5BKTU84I7Q1X4 | rename field1{} as 0_3, field2{} as 0_5, field3{} as 1_0, field5{} as 5_0, field6{} as 10_0, field8{} as 2_5
+| timechart max(0_3) max(0_5) max(1_0) max(2_5) max(5_0) max(10_0)</query>
+          <earliest>$field1.earliest$</earliest>
+          <latest>$field1.latest$</latest>
+          <refresh>10m</refresh>
+          <refreshType>delay</refreshType>
+        </search>
+        <option name="charting.axisTitleX.visibility">collapsed</option>
+        <option name="charting.axisY.scale">log</option>
+        <option name="charting.chart">line</option>
+        <option name="charting.drilldown">none</option>
+        <option name="refresh.display">progressbar</option>
+      </chart>
+    </panel>
+  </row>
+  <row>
+    <panel>
+      <html>
+        <center>
+        <style type="text/css">#legend-full table.infoaqitable { line-height:1.5;background-color:white; max-width:1000px; width:95%; margin:0px; border:1px solid black; cursor:pointer;}#legend-full table.infoaqitable td { padding:5px; font-size:15px;text-shadow: none; }#legend-full .aqiwtxt { color: #ffffff;}#legend-full .aqibtxt { color: #000000;}@media only screen and (max-width: 800px) {#legend-full table.infoaqitable { width:98%; }}@media only screen and (max-width: 800px) {#legend-full table.infoaqitable td { display: block; }#legend-full table.infoaqitable td:nth-child(1) { display:inline-block; font-size: 1.2em;}#legend-full table.infoaqitable td:nth-child(2) { display:inline-block; font-weight: 800; font-size: 1.2em;}}</style>
+        <div id="legend-full" onclick="window.location=&quot;/scale/&quot;">
+          <table class="infoaqitable cautionary">
+              <thead>
+                <tr>
+                  <td>AQI</td>
+                  <td>Air Pollution Level</td>
+                  <td>Health Implications</td>
+                  <td>Cautionary Statement (for PM2.5)</td>
+                </tr>
+              </thead>
+              <tbody>
+                <tr style="background-color:#009966;">
+                  <td class="aqiwtxt" nowrap="true">0 - 50</td>
+                  <td class="aqiwtxt">Good</td>
+                  <td class="aqiwtxt">Air quality is considered satisfactory, and air pollution poses little or no risk</td>
+                  <td class="aqiwtxt">None</td>
+                </tr>
+                <tr style="background-color:#ffde33" class="aqibtxt">
+                  <td class="aqibtxt" nowrap="true">51 -100</td>
+                  <td class="aqibtxt">Moderate</td>
+                  <td class="aqibtxt">Air quality is acceptable; however, for some pollutants there may be a moderate health concern for a very small number of people who are unusually sensitive to air pollution.</td>
+                  <td class="aqibtxt">Active children and adults, and people with respiratory disease, such as asthma, should limit prolonged outdoor exertion.</td>
+                </tr>
+                <tr style="background-color:#ff9933;">
+                  <td class="aqibtxt" nowrap="true">101-150</td>
+                  <td class="aqibtxt">Unhealthy for Sensitive Groups</td>
+                  <td class="aqibtxt">Members of sensitive groups may experience health effects. The general public is not likely to be affected.</td>
+                  <td class="aqibtxt">Active children and adults, and people with respiratory disease, such as asthma, should limit prolonged outdoor exertion.</td>
+                </tr>
+                <tr style="background-color:#cc0033;">
+                  <td class="aqiwtxt" nowrap="true">151-200</td>
+                  <td class="aqiwtxt">Unhealthy</td>
+                  <td class="aqiwtxt">Everyone may begin to experience health effects; members of sensitive groups may experience more serious health effects</td>
+                  <td class="aqiwtxt">Active children and adults, and people with respiratory disease, such as asthma, should avoid prolonged outdoor exertion; everyone else, especially children, should limit prolonged outdoor exertion</td>
+                </tr>
+                <tr style="background-color:#660099;">
+                  <td class="aqiwtxt" nowrap="true">201-300</td>
+                  <td class="aqiwtxt">Very Unhealthy</td>
+                  <td class="aqiwtxt">Health warnings of emergency conditions. The entire population is more likely to be affected.</td>
+                  <td class="aqiwtxt">Active children and adults, and people with respiratory disease, such as asthma, should avoid all outdoor exertion; everyone else, especially children, should limit outdoor exertion.</td>
+                </tr>
+                <tr style="background-color:#7e0023;">
+                  <td class="aqiwtxt" nowrap="true">300+</td>
+                  <td class="aqiwtxt">Hazardous</td>
+                  <td class="aqiwtxt">Health alert: everyone may experience more serious health effects</td>
+                  <td class="aqiwtxt">Everyone should avoid all outdoor exertion</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          </center>
+      </html>
+    </panel>
+  </row>
+</form>
