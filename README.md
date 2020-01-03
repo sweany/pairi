@@ -5,6 +5,11 @@
 
 A custom web server which intercepts calls from the PurpleAir monitor. Use a custom DNS host(A) record to impersonate api.thingspeak.com.
 
+Ingest the access logs with splunk, make a nice dashboard.
+
+![air quality dashboard](splunk.png "Air Quality Dashboard")
+
+
 
 
 ### Details
@@ -25,4 +30,7 @@ The device sends 3 different HTTP requests every 2 minutes. They look similar to
 * `<key2>` reports particle counters, in ug per deciliter.
 
 * `<key3>` reports temperature, humidity, and pressure.
+
+* The source for the splunk dashboard is in dashboard.xml.
+
 
